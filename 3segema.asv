@@ -1,0 +1,71 @@
+function  res = 3segema(x) %定义函数
+%% 自定义函数
+% 脚本文件:3segema.m
+% 函数功能：
+% 该函数用来计算矩阵x中含有粗大误差值的坏值
+%
+% 应用示例：
+% res =3segema(x)
+% 
+% 定义变量：
+% x ---要求解的变量矩阵
+% 
+% res: 与x尺寸大小相同，并且坏值元素标记为1，反之标记为0
+%
+%返回处理的数据的行和列
+
+
+%%拉依达准则（3σ准则）去除异常值
+[row,colum] = size(x);
+for j = 1:colum
+    P = x(:,j);
+    ave = mean(P);   % 求xi的算数平均值
+    [h,p]=lillietest(P);    %判断向量是否正态。h=0
+    %返回值h为假设,只有0和1两种情况，h=0假设符合正态分布，h=1假设不符合正态分布
+    %返回值p为方差概率，也可以说事情的发生概率，p<0.05(显著性水平通常取0.05，还有0.025和0.01三种情况)为不可能事件，拒绝；p>0.05，接受
+    segema = std(P);   %求解标准差
+    for i = 1:row
+        if(abs(P(i) - ave) > 3 * segema)
+           P(i)=0;
+           P_ans = P(P==0);
+           len = length(P_ans);
+           if len == []
+               continue
+           else
+               location = find(P==0)
+               if len == 1
+                   loc(1,ii)=location
+               else
+                   for iii=1:len
+                       loc(iii,ii)=location(iii)
+                   end
+               end
+            end
+        end
+    end
+end    
+    
+
+
+
+plot(a);
+aa=mean(a); %算出a的算数平均值
+sig=std(a); %算出a的标准偏差
+m=zeros(1,length(a));
+i=1;
+for t=1:length(a)
+m(t)=abs(a(t)-aa);
+  if m(t)>=3*sig
+  n(t)=aa;
+  num(i)=a(t);%显示异常数据
+  i=i+1;
+else
+  n(t)=a(t);
+  end
+end
+b=0:1:length(n)-1;
+subplot(2,1,2);
+plot(b,n);
+title('拉以达法则剔除坏值')
+xlabel('采样时间');
+ylabel('采样点数')
